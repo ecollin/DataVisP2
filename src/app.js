@@ -1,6 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import {csv} from 'd3-fetch';
 
-import Root from './components/root.js';
+csv('data/athlete_events.csv')
+  .then(data => {
+    processData(data);
+  });
 
-ReactDOM.render(<Root />, document.getElementById('app'));
+function processData(data) {
+  console.log(data);
+}
+
