@@ -162,7 +162,7 @@ function makeSlider(data, medalData) {
     .attr('text-anchor', 'middle')	
     .text('Year: ' + range.min);
 
-  slider.on('change', e => {
+  slider.on('input', e => {
     let curr = Number(slider.property('value'));
     if (curr < 1992 && (curr - range.min) % 4 !== 0) {
       // Before 1992 there were only olympics ever 2 years b/c there were no winter
