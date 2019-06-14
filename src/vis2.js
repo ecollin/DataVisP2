@@ -127,7 +127,7 @@ function drawChart(data) {
       .attr('transform', `translate(0, ${plotHeight})`)
     .call(axisBottom(xScale));
   svg.append('text')
-     .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom / 1.5})`)
+     .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom})`)
      .attr('text-anchor', 'middle')
      .text('Region');
 
