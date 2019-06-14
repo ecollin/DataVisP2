@@ -79,7 +79,7 @@ export function makeVis2(data) {
 function drawChart(data) {
   const width = 500;
   const height = 500;
-  const margin = {top: 50, left: 80, right: 50, bottom: 150};
+  const margin = {top: 50, left: 80, right: 50, bottom: 50};
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
 
@@ -127,7 +127,7 @@ function drawChart(data) {
       .attr('transform', `translate(0, ${plotHeight})`)
     .call(axisBottom(xScale));
   svg.append('text')
-     .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom / 3})`)
+     .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom / 1.5})`)
      .attr('text-anchor', 'middle')
      .text('Region');
 
