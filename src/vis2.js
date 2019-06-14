@@ -15,11 +15,6 @@ const regions = ['Americas', 'Asia', 'Europe', 'Africa', 'Oceania'];
 const badYears = ['1906', '1916', '1940', '1944'];
 
 function processData(data) {
-const temp =  data.reduce((acc, entry) => {
-    const year = entry['Year'];
-    if (!acc[year]) acc[year] = year;
-    return acc;
-  }, {});
   const medalists = data.filter((entry) => {
     return entry['Medal'] !== 'NA' && 
     // Olympics were unofficial in 1906
@@ -72,21 +67,22 @@ export function makeVis2(data) {
     .attr('width', width)
     .attr('height', height);
 
-  makeSlider(data);
-  drawChart(data);  
+  // medalData holds object with prop for every olympic year
+  // and that prop holds an obj with medal counts for the 5 regions
+  // in that year: Asia, Europe, Americas, Oceania, and Africa
+  const medalData = processData(data);
+
+  makeSlider(data, medalData);
+  drawChart(medalData);  
 }
 
-function drawChart(data) {
+function drawChart(medalData) {
   const width = 500;
   const height = 500;
   const margin = {top: 50, left: 80, right: 50, bottom: 50};
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
 
-  // medalData holds object with prop for every olympic year
-  // and that prop holds an obj with medal counts for the 5 regions
-  // in that year: Asia, Europe, Americas, Oceania, and Africa
-  const medalData = processData(data);
   const year = document.querySelector('.yearSlider').value;
   const regions = ['Americas', 'Asia', 'Europe', 'Africa', 'Oceania'];
 
@@ -144,7 +140,7 @@ function drawChart(data) {
      .text('Percent of medals');
 }
 
-function makeSlider(data) {
+function makeSlider(data, medalData) {
   const sliderDiv = select('.vis2')
     .append('div')
     .attr('class', 'sliderDiv');
@@ -167,18 +163,20 @@ function makeSlider(data) {
     .text('Year: ' + range.min);
 
   slider.on('change', e => {
-    const curr = Number(slider.property('value'));
+    let curr = Number(slider.property('value'));
     if (curr < 1992 && (curr - range.min) % 4 !== 0) {
       // Before 1992 there were only olympics ever 2 years b/c there were no winter
       // olympics. So move down 2 years if in this range.  
-      document.querySelector('.yearSlider').value = curr - 2;
+      curr = curr - 2;
     }
-    while (badYears.map(Number).includes(Number(slider.property('value')))) {
-      document.querySelector('.yearSlider').value = curr - 2;
+    while (badYears.map(Number).includes(curr)) {
+      curr -= 4;
     }
+    document.querySelector('.yearSlider').value = curr;
+
     label.text('Year: ' + slider.property('value'))     
     select('.medalChart').selectAll('*').remove();
-    makeVis2(data);
+    drawChart(medalData);
     
   });
 }
