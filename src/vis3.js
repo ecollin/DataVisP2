@@ -1,4 +1,8 @@
 import {select, enter} from 'd3-selection';
+import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
+import {schemeCategory10} from 'd3-scale-chromatic';
+import {axisBottom, axisLeft} from 'd3-axis';
+
 // MAKE A FORM TO SELECT YEAR: 50, 40 etc ?
 
 
@@ -22,13 +26,121 @@ export function makeVis3(data) {
 console.log(newData);
   
 makeRangeSelectors(newData);
+drawChart(newData);
 
 
 }
 
 function drawChart(data) {
-  
+  const width = 500;
+  const height = 500;
+  const margin = {top: 50, left: 80, right: 50, bottom: 50};
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
 
+  // fill checkedObjs with the objects from data representing
+  // data ranges that the user checked.
+  // these objects have a prop for every sport where someone >= 50 won a medal
+  // and the count, and also a prop 'total' for the total # people >= 50 in that time
+  const checkedObjs = [];
+  yearRanges.forEach((_, i) => {
+    const box = document.getElementById(`${i}`);
+    if (box.checked) checkedObjs.push(data[i]);
+  }); 
+  // tot holds total # medals won by people >=50 in all selected ranges
+  let tot = 0; 
+  // each prop in combinedData is an obj with a sport and a value holding
+  // % of people >= 50 who won a medal in the selected time range who won it in that sport
+  const combinedData = checkedObjs.reduce((acc, obj) => {
+    tot += obj['total'];
+    Object.keys(obj).forEach(key => {
+      if (key === 'total') return;
+      if (!acc[key]) acc[key] = 0;
+      acc[key] += obj[key]; 
+    }); 
+    return acc;
+  }, {});  
+
+  // turn counts into %s
+  Object.keys(combinedData).forEach((key) => {
+    combinedData[key] = 100 * combinedData[key] / tot; 
+  });
+  // Now collect the top 10 largest % sports into an array; these are the ones graphed
+  const sports = getTopN(combinedData, 10);
+  const finalData = sports.reduce((acc, sport) => {
+    const newObj = {sport, value: combinedData[sport]};
+    acc.push(newObj);
+    return acc;
+  }, []);
+
+  const x = scaleBand()
+    .domain(sports)
+    .range([margin.left, plotWidth])
+    .padding(0.4);
+  const y = scaleLinear()
+    .domain([0, 100])
+    .range([plotHeight, margin.bottom]);
+  const color = scaleOrdinal()
+    .domain(sports)
+    .range(schemeCategory10);
+
+  const svg = select('.vis3Chart');
+  svg.selectAll('.bars')
+    .data(finalData)
+    .enter()
+    .append('rect')
+      .attr('class', 'bars')
+      .attr('x', d => x(d.sport))
+      .attr('y', d => y(d.value))
+      .attr('width', x.bandwidth())
+      .attr('height', d => y(0) - y(d.value))
+      .attr('stroke-width', 1)
+      .attr('stroke', 'black')
+      .attr('fill', d => color(d.sport));
+      
+   svg.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0, ${plotHeight})`)
+    .call(axisBottom(x));
+  svg.append('text')
+     .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom})`)
+     .attr('text-anchor', 'middle')
+     .text('Event');
+
+  svg.append('g')
+      .attr('class', 'y-axis')
+      .attr('transform', `translate(${margin.left}, 0)`)
+    .call(axisLeft(y));
+  svg.append('text')
+     .attr('transform', 'rotate(-90)')
+     .attr('x', -plotHeight / 2)
+     .attr('y', margin.left / 2)
+     .attr('dx', '-4em')
+     .attr('text-anchor', 'middle')
+     .text('Percent of medals');
+
+ 
+
+  
+}
+
+//Given an object with properties that are numbers,
+// returns an array holding the n largest properties
+function getTopN(obj, n) {
+  const vals = [];
+  for (const prop in obj) {
+    vals.push(obj[prop]);
+  }
+  vals.sort();
+  const min = vals.length < n ? vals[vals.length - 1] : vals[n-1]; 
+  const res = [];
+  for (const prop in obj) {
+    if (obj[prop] >= min) res.push(prop);
+    if (res.length === n) return res;
+  }
+  // get here if fewer than n properties.
+  return res; 
+  
 
 }
 
@@ -56,7 +168,7 @@ function makeRangeSelectors(data) {
       .attr('class', 'checkboxes')
       .attr('type', 'checkbox')
       .attr('id', (d, i) => i)
-      .text(d => d);
+      .property('checked', (d, i) => i === yearRanges.length - 1);
 }
 
 
