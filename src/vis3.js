@@ -96,7 +96,20 @@ function drawChart(data) {
       .attr('height', d => y(0) - y(d.value))
       .attr('stroke-width', 1)
       .attr('stroke', 'black')
-      .attr('fill', d => color(d.sport));
+      .attr('fill', d => color(d.sport))
+      .on('mouseover', d => {
+        svg.append('text')
+          .attr('id', 'hover-text')
+          .attr('x', x(d.sport) - 40)
+          .attr('y', y(d.value) - plotWidth / 2)
+          .attr('fill', 'black')
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', '12px')
+          .text(d.sport);
+      })
+      .on('mouseout', d => {
+        select('#hover-text').remove();
+      });
       
    svg.append('g')
       .attr('class', 'x-axis')
