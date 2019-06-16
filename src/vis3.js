@@ -26,8 +26,6 @@ export function makeVis3(data) {
   
   makeRangeSelectors(newData);
   drawChart(newData);
-
-
 }
 
 function drawChart(data) {
@@ -54,8 +52,11 @@ function drawChart(data) {
     tot += obj['total'];
     Object.keys(obj).forEach(key => {
       if (key === 'total') return;
-      if (!acc[key]) acc[key] = 0;
-      acc[key] += obj[key]; 
+      // truncKey holds first word of key. This makes things like 
+      // sailing women's vs sailing men's map to the same event
+      const truncKey = key.substr(0, key.indexOf(' '));
+      if (!acc[truncKey]) acc[truncKey] = 0;
+      acc[truncKey] += obj[key]; 
     }); 
     return acc;
   }, {});  
@@ -99,7 +100,6 @@ function drawChart(data) {
       .on('mouseover', (d, i) => {
         const parentDOM = document.getElementsByClassName('vis3')[0];
         parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 1);
-        console.log(document.getElementsByClassName('tick')[0]);
       })
       .on('mouseout', (d, i) => {
         const parentDOM = document.getElementsByClassName('vis3')[0];
@@ -137,7 +137,7 @@ function getTopN(obj, n) {
   for (const prop in obj) {
     vals.push(obj[prop]);
   }
-  vals.sort();
+  vals.sort((a, b) => b-a);
   const min = vals.length < n ? vals[vals.length - 1] : vals[n-1]; 
   const res = [];
   for (const prop in obj) {
