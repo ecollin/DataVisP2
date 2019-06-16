@@ -1,4 +1,4 @@
-import {select, enter} from 'd3-selection';
+import {select, selectAll, enter} from 'd3-selection';
 import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
 import {schemeCategory10} from 'd3-scale-chromatic';
 import {axisBottom, axisLeft} from 'd3-axis';
@@ -23,10 +23,9 @@ export function makeVis3(data) {
 
   
   const newData = processData(data);
-console.log(newData);
   
-makeRangeSelectors(newData);
-drawChart(newData);
+  makeRangeSelectors(newData);
+  drawChart(newData);
 
 
 }
@@ -77,7 +76,7 @@ function drawChart(data) {
     .domain(sports)
     .range([margin.left, plotWidth])
     .padding(0.4);
-  const y = scaleLinear()
+    const y = scaleLinear()
     .domain([0, 100])
     .range([plotHeight, margin.bottom]);
   const color = scaleOrdinal()
@@ -97,21 +96,18 @@ function drawChart(data) {
       .attr('stroke-width', 1)
       .attr('stroke', 'black')
       .attr('fill', d => color(d.sport))
-      .on('mouseover', d => {
-        svg.append('text')
-          .attr('id', 'hover-text')
-          .attr('x', x(d.sport) - 40)
-          .attr('y', y(d.value) - plotWidth / 2)
-          .attr('fill', 'black')
-          .attr('font-family', 'sans-serif')
-          .attr('font-size', '12px')
-          .text(d.sport);
+      .on('mouseover', (d, i) => {
+        const parentDOM = document.getElementsByClassName('vis3')[0];
+        parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 1);
+        console.log(document.getElementsByClassName('tick')[0]);
       })
-      .on('mouseout', d => {
-        select('#hover-text').remove();
+      .on('mouseout', (d, i) => {
+
+        const parentDOM = document.getElementsByClassName('vis3')[0];
+        parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 0);
       });
       
-   svg.append('g')
+  svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${plotHeight})`)
     .call(axisBottom(x));
@@ -119,6 +115,8 @@ function drawChart(data) {
      .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom})`)
      .attr('text-anchor', 'middle')
      .text('Event');
+  selectAll('.tick')
+    .attr('opacity', 0);
 
   svg.append('g')
       .attr('class', 'y-axis')
@@ -131,10 +129,6 @@ function drawChart(data) {
      .attr('dx', '-4em')
      .attr('text-anchor', 'middle')
      .text('Percent of medals');
-
- 
-
-  
 }
 
 //Given an object with properties that are numbers,
