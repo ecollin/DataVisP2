@@ -65,8 +65,8 @@ function drawChart(data) {
   Object.keys(combinedData).forEach((key) => {
     combinedData[key] = 100 * combinedData[key] / tot; 
   });
-  // Now collect the top 10 largest % sports into an array; these are the ones graphed
-  const sports = getTopN(combinedData, 10);
+  // Now collect the top N largest % sports into an array; these are the ones graphed
+  const sports = getTopN(combinedData, 7);
   const finalData = sports.reduce((acc, sport) => {
     const newObj = {sport, value: combinedData[sport]};
     acc.push(newObj);
@@ -97,15 +97,20 @@ function drawChart(data) {
       .attr('stroke-width', 1)
       .attr('stroke', 'black')
       .attr('fill', d => color(d.sport))
-      .on('mouseover', (d, i) => {
-        const parentDOM = document.getElementsByClassName('vis3')[0];
-        parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 1);
+      .on('mouseover', d => {
+        svg.append('text')
+          .attr('id', 'hover-text')
+          .attr('x', x(d.sport))
+          .attr('y', margin.top + 20)
+          .attr('fill', 'black')
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', '12px')
+          .text(d.sport);
       })
-      .on('mouseout', (d, i) => {
-        const parentDOM = document.getElementsByClassName('vis3')[0];
-        parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 0);
+      .on('mouseout', d => {
+        select('#hover-text').remove();
       });
-      
+     
   svg.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${plotHeight})`)
@@ -115,7 +120,7 @@ function drawChart(data) {
      .attr('text-anchor', 'middle')
      .text('Event');
   select('.vis3').selectAll('.tick')
-    .attr('opacity', 0);
+    .attr('font-size', 8);
 
   svg.append('g')
       .attr('class', 'y-axis')
@@ -232,3 +237,9 @@ function getRangeString(year) {
     return "2008-2016"; //last year range is not 10 years
   }
 }
+
+
+
+
+
+  
