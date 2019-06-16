@@ -13,8 +13,12 @@ const yearRanges = [1896, 1906, 1916, 1926, 1948, 1958, 1968, 1978, 1988, 1998, 
 export function makeVis3(data) {
   const height = 500;
   const width = 500;
-  select('#app').append('div')
+  select('body').append('div')
     .attr('class', 'vis3')
+    .style('display', 'flex')
+    .style('flex-direction', 'column')
+    .style('align-items', 'center')
+    .style('justify-content', 'center')
   .append('div')
     .attr('class', 'checkbox-div');
 
@@ -290,9 +294,3 @@ function getRangeString(year) {
     return "2008-2016"; //last year range is not 10 years
   }
 }
-
-
-
-
-
-  

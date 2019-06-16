@@ -1,6 +1,12 @@
 // you can put util functions here if you want
 
 export function getRegion(country) {
+  // I must confess using the 'Team' property in the data instead of the nation one was a 
+  // crucial mistake. How did I spend so much time compiling the information for this function? 
+  // I will answer, in case any poor soul reading this code hopes to perform a post mortem
+  // I kept telling myself I was almost done and it wouldn't take as long as switching over to the other property
+  // would. Let me tell. I was wrong. I was deaaaaaaaaaaaaaad wrong.
+  
   const regions = {
     'China': 'Asia',
     'Greece': 'Europe',

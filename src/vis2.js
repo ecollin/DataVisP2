@@ -28,7 +28,6 @@ function processData(data) {
   const regionData = medalists.reduce((acc, entry) => {
     const year = Number(entry['Year']); 
     const region = getRegion(entry['Team']);
-    // DELETE below line after getRegion fully written
     if (region === 'NA') return acc; 
     if (!acc[year]) {
       acc[year] = {total: 0};
@@ -59,8 +58,12 @@ function processData(data) {
 export function makeVis2(data) {
   const height = 500;
   const width = 500;
-  const div = select('#app').append('div')
-    .attr('class', 'vis2');
+  const div = select('body').append('div')
+    .attr('class', 'vis2')
+    .style('display', 'flex')
+    .style('flex-direction', 'column')
+    .style('align-items', 'center')
+    .style('justify-content', 'center');
 
   const svg = select('.vis2').append('svg')
     .attr('class', 'medalChart')

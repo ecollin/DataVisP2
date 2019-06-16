@@ -1,4 +1,8 @@
 /* EDIT ANYTHING YOU WANT */
+body {
+  background-color: #d3d3d3;
+}
+
 .title {
   color: black;
   font-family: Roboto-Black;
@@ -34,10 +38,13 @@
   width: auto;
 }
 
-.header {
+header {
+  font-family: sans-serif;
   display: flex;
+  align-items: center;
   flex-direction: column;
 }
+
 
 .state-hex {
   dominant-baseline: central;
