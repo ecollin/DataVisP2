@@ -13,8 +13,10 @@ const yearRanges = [1896, 1906, 1916, 1926, 1948, 1958, 1968, 1978, 1988, 1998, 
 export function makeVis3(data) {
   const height = 500;
   const width = 500;
-  const div = select('#app').append('div')
-    .attr('class', 'vis3');
+  select('#app').append('div')
+    .attr('class', 'vis3')
+  .append('div')
+    .attr('class', 'checkbox-div');
 
   const svg = select('.vis3').append('svg')
     .attr('class', 'vis3Chart')
@@ -22,11 +24,58 @@ export function makeVis3(data) {
     .attr('height', height);
 
   
+  makeAgeSelector(data);
   const newData = processData(data);
-  
-  makeRangeSelectors(newData);
+    makeRangeSelectors(newData);
   drawChart(newData);
 }
+
+function makeAgeSelector(data) {
+  const div = select('.vis3').append('div')
+    .attr('class', 'ageDiv');
+
+    div.append('label')
+      .attr('class', 'label')
+      .attr('for', 'ageSelector')
+      .text('Bottom of 10 year age range displayed (10-50 are valid): ')
+    const ageSelector = div.append('input')
+      .attr('id', 'ageSelector')
+      .attr('type', 'number')
+      .attr('min', 10)
+      .attr('max', 50)
+      .property('value', 50);
+    const button = div.append('input')
+      .attr('id', 'ageSelectorButton')
+      .attr('type', 'button')
+      .attr('value', 'Change age range');
+    button.on('click', () => {
+      const val = Number(ageSelector.property('value'));
+      if (val > 50 || val < 10) {
+        return; 
+      }
+      select('.vis3Chart').selectAll('*').remove();
+      select('.checkbox-div').selectAll('*').remove();
+      const newData = processData(data); 
+      makeRangeSelectors(newData);
+      drawChart(newData);
+    }) ;
+
+/*  ageSelector.on('input', () => {
+console.log(val);
+    if (val > 70 || val < 10) {
+    }
+  });
+  ageSelector.on('change', () => {
+    select('.vis3Chart').selectAll('*').remove();
+    select('.checkbox-div').selectAll('*').remove();
+    const newData = processData(data); 
+    makeRangeSelectors(newData);
+    drawChart(newData);
+  });
+*/
+
+}
+
 
 function drawChart(data) {
   const width = 500;
@@ -37,8 +86,9 @@ function drawChart(data) {
 
   // fill checkedObjs with the objects from data representing
   // data ranges that the user checked.
-  // these objects have a prop for every sport where someone >= 50 won a medal
-  // and the count, and also a prop 'total' for the total # people >= 50 in that time
+  // these objects have a prop for every sport where someone between 
+  // ageMin and ageMax won a medal and the count, and also a prop 
+  // 'total' for the total # people in that age range in that time
   const checkedObjs = [];
   yearRanges.forEach((_, i) => {
     const box = document.getElementById(`${i}`);
@@ -104,7 +154,7 @@ function drawChart(data) {
           .attr('y', margin.top + 20)
           .attr('fill', 'black')
           .attr('font-family', 'sans-serif')
-          .attr('font-size', '12px')
+          .attr('font-size', '20px')
           .text(d.sport);
       })
       .on('mouseout', d => {
@@ -132,7 +182,7 @@ function drawChart(data) {
      .attr('y', margin.left / 2)
      .attr('dx', '-4em')
      .attr('text-anchor', 'middle')
-     .text('Percent of medals');
+     .text('% medals (for selected age range)');
 }
 
 //Given an object with properties that are numbers,
@@ -159,8 +209,7 @@ function getTopN(obj, n) {
 // the corresponding year range's data in vis2 and redraw it.
 // Each is labelled with its year range and the # medalists > 50 in it.
 function makeRangeSelectors(data) {
-  const div = select('.vis3').append('div')
-    .attr('class', 'checkbox-div');
+  const div = select('.checkbox-div');
 
   const labels = yearRanges.map((year) => {
     const rangeStr = getRangeString(year);
@@ -191,8 +240,12 @@ function makeRangeSelectors(data) {
 // and each entry of which holds an object with total medal count in that range
 // and a prop for each event in that range where medals were won by people > 50 yrs old
 function processData(data) {
+  const ageMin = select('#ageSelector').property('value');
+  const ageMax = ageMin + 10;
+
   const medalists = data.filter((entry) => {
-    return entry['Medal'] !== 'NA' && Number(entry['Age']) >= 50;
+    return entry['Medal'] !== 'NA' && 
+      Number(entry['Age']) >= ageMin && Number(entry['Age']) <= ageMax;
   });
   const res = medalists.reduce((acc, entry) => {
     const i = getRangeIndex(Number(entry['Year']));
