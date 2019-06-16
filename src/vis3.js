@@ -102,7 +102,6 @@ function drawChart(data) {
         console.log(document.getElementsByClassName('tick')[0]);
       })
       .on('mouseout', (d, i) => {
-
         const parentDOM = document.getElementsByClassName('vis3')[0];
         parentDOM.getElementsByClassName('tick')[i].setAttribute('opacity', 0);
       });
@@ -115,7 +114,7 @@ function drawChart(data) {
      .attr('transform', `translate(${plotWidth / 2 + margin.left / 2}, ${plotHeight + margin.bottom})`)
      .attr('text-anchor', 'middle')
      .text('Event');
-  selectAll('.tick')
+  select('.vis3').selectAll('.tick')
     .attr('opacity', 0);
 
   svg.append('g')
@@ -175,7 +174,11 @@ function makeRangeSelectors(data) {
       .attr('class', 'checkboxes')
       .attr('type', 'checkbox')
       .attr('id', (d, i) => i)
-      .property('checked', (d, i) => i === yearRanges.length - 1);
+      .property('checked', (d, i) => i === yearRanges.length - 1)
+      .on('change', () => {
+        select('.vis3Chart').selectAll('*').remove();
+        drawChart(data);
+      });
 }
 
 
