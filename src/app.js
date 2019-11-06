@@ -1,10 +1,7 @@
 import {select} from 'd3-selection';
 import {csv} from 'd3-fetch';
-import {makeGDPVis} from './GDPVis.js';
 import {makeVis2} from './vis2.js';
 import {makeVis3} from './vis3.js';
-import {makeVis4} from './vis4.js';
-import {makeVis5} from './vis5.js';
 
 const text1 = `
 Our group looked at olympics data going as far back as 1896, when the modern Olympic Games began. 
@@ -26,6 +23,51 @@ const text5 = `
 A lot of information could be analyzed through this visualization. One interesting one is where people in the ages 50-60 get their medals. In recent years, by far the most common answer is equestrian events. If you go back in time though, other events take the lead, from the art events (which were non-athletic events in the categories of architecture, literature, music, painting, and sculpture, which were eventually removed because artists could use their works commercially and the olympics were supposed to be non-commercial in that sense) to other athletic events that youth doesn't give too much of an advantage in such as archery. Sailing has always also been common for the older olympian winners. (A flaw with this vis that I feel obligated to note is that it does not account for the total number of participants in each event over the years. Equestrianism likely has many more participants than it used to, at least partly explaining its rise in older medalists.
 `;
 
+/* 
+ * setupPage just adds the texts above to the HTML and divs/svgs for the visualizations. 
+ *
+ * TODO: consider moving the div creations for text here to index.html. 
+ * They were created in JS due to rushing to finish the project w/out 
+ * much consideration.
+ */
+function setupPage() {
+  const height = 500;
+  const width = 500;
+  select('#intro').text(text1);
+  select('body').append('div').append('text').text(text2);
+  select('body').append('div').append('text').text(text3);
+  select('body').append('div')
+    .attr('class', 'vis2')
+    .style('display', 'flex')
+    .style('flex-direction', 'column')
+    .style('align-items', 'center')
+    .style('justify-content', 'center');
+  
+  select('.vis2').append('svg')
+    .attr('class', 'medalChart')
+    .attr('width', width)
+    .attr('height', height);
+  
+  select('body').append('div').style('margin', '30px 0').append('text').text(text4);
+  
+  select('body').append('div')
+    .attr('class', 'vis3')
+    .style('display', 'flex')
+    .style('flex-direction', 'column')
+    .style('align-items', 'center')
+    .style('justify-content', 'center')
+  .append('div')
+    .attr('class', 'checkbox-div');
+  
+  select('body').append('div').style('margin', '30px 0').append('text').text(text5);
+  
+  select('.vis3').append('svg')
+    .attr('class', 'vis3Chart')
+    .attr('width', width)
+    .attr('height', height);
+}
+setupPage();
+
 csv('data/athlete_events.csv')
   .then(data => {
     makeVises(data);
@@ -33,16 +75,8 @@ csv('data/athlete_events.csv')
 
 
 function makeVises(data) {
-  select('#intro').text(text1);
-  select('body').append('div').append('text').text(text2);
-  makeGDPVis(data); 
   makeVis2(data);
-  select('body').append('div').append('text').text(text3);
-  select('body').append('div').style('margin', '30px 0').append('text').text(text4);
   makeVis3(data);
-  select('body').append('div').style('margin', '30px 0').append('text').text(text5);
-  makeVis4(data);
-  makeVis5(data);
 }
 
 

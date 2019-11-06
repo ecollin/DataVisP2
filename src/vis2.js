@@ -56,19 +56,6 @@ function processData(data) {
 }
 
 export function makeVis2(data) {
-  const height = 500;
-  const width = 500;
-  const div = select('body').append('div')
-    .attr('class', 'vis2')
-    .style('display', 'flex')
-    .style('flex-direction', 'column')
-    .style('align-items', 'center')
-    .style('justify-content', 'center');
-
-  const svg = select('.vis2').append('svg')
-    .attr('class', 'medalChart')
-    .attr('width', width)
-    .attr('height', height);
 
   // medalData holds object with prop for every olympic year
   // and that prop holds an obj with medal counts for the 5 regions

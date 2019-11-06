@@ -11,21 +11,6 @@ import {axisBottom, axisLeft} from 'd3-axis';
 const yearRanges = [1896, 1906, 1916, 1926, 1948, 1958, 1968, 1978, 1988, 1998, 2008];
 
 export function makeVis3(data) {
-  const height = 500;
-  const width = 500;
-  select('body').append('div')
-    .attr('class', 'vis3')
-    .style('display', 'flex')
-    .style('flex-direction', 'column')
-    .style('align-items', 'center')
-    .style('justify-content', 'center')
-  .append('div')
-    .attr('class', 'checkbox-div');
-
-  const svg = select('.vis3').append('svg')
-    .attr('class', 'vis3Chart')
-    .attr('width', width)
-    .attr('height', height);
 
   
   makeAgeSelector(data);
