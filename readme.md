@@ -1,3 +1,10 @@
+# Summary for GitHub viewers
+This was a group project in which we had to investigate a dataset of our choice and, in particular, create several visualizations displaying interesting content of the dataset. The scaffolding was given to us, but the core code of the project--consisting of several visualizations written in d3--was written by me. That code can be found in the src folder. 
+
+Below I've included the ReadMe given to us describing the specifications of the project. Note that, although this was a group project in which I technically worked with all other members, literally all of the code that was not given to us was written by me. (This explains why we only have 3 out of the 5 required visualizations; my group members did not contribute theirs.) 
+
+------------------------------------------------------------------------
+
 # Explorables / Explainables
 ## CMSC 239 Data Visualization - P2
 
